@@ -2,6 +2,7 @@
   "expo": {
     "name": "DvorasProject",
     "slug": "DvorasProject",
+    "scheme": "dvorasproject",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/app_icon.png",
@@ -22,6 +23,9 @@
         "foregroundImage": "./assets/images/splashscreen.png",
         "backgroundColor": "#F0F7F9"
       }
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
