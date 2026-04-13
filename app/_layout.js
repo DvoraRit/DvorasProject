@@ -46,7 +46,16 @@ export default function RootLayout() {
         headerStyle: { backgroundColor: '#F0F7F9' },
         headerTintColor: '#333',
       }}
-    />
+    >
+      <Drawer.Screen
+        name="index"
+        options={{ drawerLabel: 'Home', title: 'Home' }}
+      />
+      <Drawer.Screen
+        name="SMSForward/index"
+        options={{ drawerLabel: 'SMS Forward', title: 'SMS Forward' }}
+      />
+    </Drawer>
   );
 }
 

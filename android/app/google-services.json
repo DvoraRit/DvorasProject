@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "430251567451",
+    "project_id": "dvorasproject",
+    "storage_bucket": "dvorasproject.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:430251567451:android:9cc2f51497cb2bbcd9527e",
+        "android_client_info": {
+          "package_name": "com.dvorasproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOwGViHlT6JoTDPjsw9DHPn1Arf0XyX_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
