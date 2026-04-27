@@ -1,5 +1,7 @@
+import { AppointmentType } from '@appTypes/appointment';
+
 export const medicalFields = [
-  'Family Doctor',
-  'Skin Care',
-  'Women Health',
+  AppointmentType.FamilyDoctor,
+  AppointmentType.SkinCare,
+  AppointmentType.WomenHealth,
 ];
