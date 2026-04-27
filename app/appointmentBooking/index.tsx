@@ -7,9 +7,9 @@ import { Appointment } from '@appTypes/appointment';
 import { useAppointmentStore } from '@store/appointmentStore';
 import UIStepIndicator from '@component/UIStepIndicator';
 import UIButton from '@component/UIButton';
-import StepField from './StepField';
-import StepDate from './StepDate';
-import StepConfirm from './StepConfirm';
+import StepField from '@component/appointmentBooking/StepField';
+import StepDate from '@component/appointmentBooking/StepDate';
+import StepConfirm from '@component/appointmentBooking/StepConfirm';
 
 const STEPS = ['Medical Field', 'Date', 'Confirm'];
 const TOTAL_STEPS = STEPS.length;
@@ -26,6 +26,12 @@ export default function AppointmentBookingScreen() {
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<Partial<Appointment>>({});
 
+  // useFocusEffect instead of useEffect:
+  // The Drawer navigator keeps screens mounted, so useEffect([mode]) won't re-run
+  // when the user navigates back to this screen with the same mode param —
+  // the component is already mounted and the dep hasn't changed.
+  // useFocusEffect fires every time the screen comes into focus, guaranteeing
+  // step and draft always reset correctly on each visit.
   useFocusEffect(
     useCallback(() => {
       if (isEditMode && booking) {
