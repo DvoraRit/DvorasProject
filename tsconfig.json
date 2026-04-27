@@ -7,7 +7,8 @@
       "@appTypes/*": ["./packages/types/*"],
       "@services/*": ["./packages/services/*"],
       "@data/*": ["./packages/data/*"],
-      "@component/*": ["./packages/component/*"]
+      "@component/*": ["./packages/component/*"],
+      "@store/*": ["./packages/store/*"]
     }
   }
 }
