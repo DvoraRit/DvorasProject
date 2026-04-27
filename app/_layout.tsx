@@ -3,10 +3,13 @@ import { View, Image, StyleSheet } from 'react-native';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerToggleButton } from '@react-navigation/drawer';
 import * as SplashScreen from 'expo-splash-screen';
+import { AuthProvider, useAuth } from '@services/authService';
+import LoginScreen from './login';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+function AppContent() {
+  const { isAuthenticated } = useAuth();
   const [appIsReady, setAppIsReady] = useState(false);
   const [animationFinished, setAnimationFinished] = useState(false);
 
@@ -38,6 +41,10 @@ export default function RootLayout() {
     );
   }
 
+  if (!isAuthenticated) {
+    return <LoginScreen />;
+  }
+
   return (
     <Drawer
       screenOptions={{
@@ -62,6 +69,14 @@ export default function RootLayout() {
         options={{ drawerItemStyle: { display: 'none' }, title: 'Create Rule' }}
       />
     </Drawer>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
