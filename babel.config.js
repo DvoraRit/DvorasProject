@@ -9,6 +9,8 @@ module.exports = function (api) {
         alias: {
           '@appTypes': './packages/types',
           '@services': './packages/services',
+          '@data': './packages/data',
+          '@component': './packages/component',
         },
       }],
     ],
