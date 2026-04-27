@@ -1,38 +1,50 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
-import { AppointmentType } from '@appTypes/appointment';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Appointment } from '@appTypes/appointment';
 import { useAppointmentStore } from '@store/appointmentStore';
 import UIStepIndicator from '@component/UIStepIndicator';
+import UIButton from '@component/UIButton';
 import StepField from './StepField';
 import StepDate from './StepDate';
-// import StepConfirm from './StepConfirm';
+import StepConfirm from './StepConfirm';
 
 const STEPS = ['Medical Field', 'Date', 'Confirm'];
 const TOTAL_STEPS = STEPS.length;
 
-// Draft state lives here while the user fills in the wizard.
+// Draft holds in-progress input as Partial<Appointment>.
 // The Zustand store is only written on final confirm — so the store
 // always holds a complete, committed booking (never a partial one).
-type DraftBooking = {
-  selectedField: AppointmentType | null;
-  selectedDate: string | null;
-  selectedSlot: string | null;
-};
 
 export default function AppointmentBookingScreen() {
-  const { setField, setDate, setSlot } = useAppointmentStore();
+  const { confirm, booking } = useAppointmentStore();
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const isEditMode = mode === 'edit';
 
   const [step, setStep] = useState(1);
-  const [draft, setDraft] = useState<DraftBooking>({
-    selectedField: null,
-    selectedDate: null,
-    selectedSlot: null,
-  });
+  const [draft, setDraft] = useState<Partial<Appointment>>({});
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isEditMode && booking) {
+        setStep(2);
+        setDraft({ appointmentType: booking.appointmentType });
+      } else {
+        setStep(1);
+        setDraft({});
+      }
+    }, [mode])
+  );
+
+  function updateDraft(update: Partial<Appointment>) {
+    setDraft(prev => ({ ...prev, ...update }));
+  }
 
   function canAdvance(): boolean {
-    if (step === 1) return draft.selectedField !== null;
-    if (step === 2) return draft.selectedDate !== null;
+    if (step === 1) return !!draft.appointmentType;
+    if (step === 2) return !!draft.date && !!draft.time;
     return true;
   }
 
@@ -46,10 +58,9 @@ export default function AppointmentBookingScreen() {
   }
 
   function handleDone() {
-    if (!draft.selectedField || !draft.selectedDate) return;
-    setField(draft.selectedField);
-    setDate(draft.selectedDate);
-    if (draft.selectedSlot) setSlot(draft.selectedSlot);
+    if (!draft.appointmentType || !draft.date || !draft.time) return;
+    confirm(draft as Appointment);
+    router.replace('/');
   }
 
   const isLastStep = step === TOTAL_STEPS;
@@ -57,44 +68,38 @@ export default function AppointmentBookingScreen() {
   return (
     <SafeAreaView style={styles.container}>
 
-      {/* Step indicator at the top */}
       <UIStepIndicator steps={STEPS} currentStep={step} />
 
-      {/* Step content */}
       <View style={styles.content}>
         {step === 1 && (
           <StepField
-            value={draft.selectedField}
-            onChange={field => setDraft(d => ({ ...d, selectedField: field, selectedDate: null, selectedSlot: null }))}
+            value={draft.appointmentType}
+            onChange={update => setDraft({ appointmentType: update.appointmentType })}
           />
         )}
-        {step === 2 && draft.selectedField && (
+        {step === 2 && (
           <StepDate
-            selectedField={draft.selectedField}
-            selectedDate={draft.selectedDate}
-            onDateChange={date => setDraft(d => ({ ...d, selectedDate: date, selectedSlot: null }))}
+            draft={draft}
+            onChange={updateDraft}
           />
         )}
-        {step === 3 && <Text style={styles.placeholder}>Step 3 — Confirm</Text>}
+        {step === 3 && <StepConfirm draft={draft} />}
       </View>
 
-      {/* Navigation */}
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.btnBack, step === 1 && styles.btnDisabled]}
+        <UIButton
+          label="Back"
           onPress={handleBack}
-          disabled={step === 1}
-        >
-          <Text style={styles.btnBackText}>Back</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.btnNext, !canAdvance() && styles.btnDisabled]}
+          disabled={step === 1 || (isEditMode && step === 2)}
+          style={styles.btnBack}
+          labelStyle={styles.btnBackText}
+        />
+        <UIButton
+          label={isLastStep ? 'Done' : 'Next'}
           onPress={handleNext}
           disabled={!canAdvance()}
-        >
-          <Text style={styles.btnNextText}>{isLastStep ? 'Done' : 'Next'}</Text>
-        </TouchableOpacity>
+          style={styles.btnNext}
+        />
       </View>
 
     </SafeAreaView>
@@ -110,12 +115,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  placeholder: {
-    textAlign: 'center',
-    color: '#aaa',
-    marginTop: 40,
-    fontSize: 15,
-  },
   footer: {
     flexDirection: 'row',
     gap: 12,
@@ -126,30 +125,15 @@ const styles = StyleSheet.create({
   },
   btnBack: {
     flex: 1,
-    paddingVertical: 14,
-    borderRadius: 10,
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#ddd',
-    alignItems: 'center',
   },
   btnBackText: {
-    fontSize: 16,
     color: '#333',
     fontWeight: '500',
   },
   btnNext: {
     flex: 2,
-    paddingVertical: 14,
-    borderRadius: 10,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-  },
-  btnNextText: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
-  },
-  btnDisabled: {
-    opacity: 0.4,
   },
 });

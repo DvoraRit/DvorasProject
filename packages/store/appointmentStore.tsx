@@ -10,32 +10,20 @@
 // -----------------------------------------
 
 import { create } from 'zustand';
-import { AppointmentType } from '@appTypes/appointment';
+import { Appointment } from '@appTypes/appointment';
 
-type AppointmentState = {
-  selectedField: AppointmentType | null;
-  selectedDate: string | null;
-  selectedSlot: string | null;
-  setField: (field: AppointmentType) => void;
-  setDate: (date: string) => void;
-  setSlot: (slot: string) => void;
+type AppointmentStore = {
+  booking: Partial<Appointment> | null;
+  confirm: (appointment: Appointment) => void;
   reset: () => void;
 };
 
-export const useAppointmentStore = create<AppointmentState>(set => ({
-  selectedField: null,
-  selectedDate: null,
-  selectedSlot: null,
+export const useAppointmentStore = create<AppointmentStore>(set => ({
+  booking: null,
 
-  setField: field =>
-    set({ selectedField: field, selectedDate: null, selectedSlot: null }),
-
-  setDate: date =>
-    set({ selectedDate: date, selectedSlot: null }),
-
-  setSlot: slot =>
-    set({ selectedSlot: slot }),
+  confirm: (appointment: Appointment) =>
+    set({ booking: appointment }),
 
   reset: () =>
-    set({ selectedField: null, selectedDate: null, selectedSlot: null }),
+    set({ booking: null }),
 }));

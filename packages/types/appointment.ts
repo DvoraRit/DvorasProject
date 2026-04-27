@@ -6,6 +6,6 @@ export enum AppointmentType {
 
 export interface Appointment {
   appointmentType: AppointmentType;
-  date: Date;
-  time: Date;
+  date: string; // "YYYY-MM-DD"
+  time: string; // "HH:MM"
 }

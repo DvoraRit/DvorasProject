@@ -2,7 +2,12 @@ import { StyleSheet } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import type { StyleProp, ViewStyle } from 'react-native';
 
-type MarkedDates = Record<string, { marked: boolean; dotColor: string; activeOpacity: number }>;
+type CustomMarking = {
+  customStyles: {
+    container: object;
+    text: object;
+  };
+};
 
 type Props = {
   availableDates: Date[];
@@ -16,46 +21,45 @@ function toDateString(date: Date): string {
 }
 
 export default function UICalendar({ availableDates, selectedDate, onDayPress, style }: Props) {
-  const markedDates: MarkedDates = availableDates.reduce<MarkedDates>((acc, date) => {
-    const key = toDateString(date);
-    acc[key] = { marked: true, dotColor: '#007AFF', activeOpacity: 0.7 };
-    return acc;
-  }, {});
+  const sortedDates = [...availableDates].sort((a, b) => a.getTime() - b.getTime());
+  const initialDate = sortedDates.length > 0 ? toDateString(sortedDates[0]) : undefined;// default to first available date or let calendar decide if none
 
-  if (selectedDate) {
+  const markedDates: Record<string, CustomMarking> = {};
+
+  sortedDates.forEach(date => {
+    const key = toDateString(date);
+    const isSelected = key === selectedDate;
+    markedDates[key] = {
+      customStyles: {
+        container: isSelected ? styles.selectedContainer : styles.availableContainer,
+        text: isSelected ? styles.selectedText : styles.availableText,
+      },
+    };
+  });
+
+  // If selectedDate is not in availableDates, still mark it as selected
+  if (selectedDate && !markedDates[selectedDate]) {
     markedDates[selectedDate] = {
-      ...markedDates[selectedDate],
-      marked: !!markedDates[selectedDate],
-      dotColor: '#007AFF',
-      activeOpacity: 0.7,
+      customStyles: {
+        container: styles.selectedContainer,
+        text: styles.selectedText,
+      },
     };
   }
 
   return (
     <Calendar
       style={[styles.calendar, style]}
-      markedDates={
-        selectedDate
-          ? {
-              ...markedDates,
-              [selectedDate]: {
-                ...markedDates[selectedDate],
-                selected: true,
-                selectedColor: '#007AFF',
-              } as any,
-            }
-          : markedDates
-      }
+      markingType="custom"
+      markedDates={markedDates}
+      initialDate={initialDate}
       onDayPress={day => onDayPress?.(day.dateString)}
       theme={{
         backgroundColor: '#ffffff',
         calendarBackground: '#ffffff',
-        selectedDayBackgroundColor: '#007AFF',
-        selectedDayTextColor: '#ffffff',
         todayTextColor: '#007AFF',
         dayTextColor: '#111',
         textDisabledColor: '#ccc',
-        dotColor: '#007AFF',
         arrowColor: '#007AFF',
         monthTextColor: '#111',
         textMonthFontWeight: '600',
@@ -75,5 +79,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
+  },
+  availableContainer: {
+    borderWidth: 1.5,
+    borderColor: '#007AFF',
+    borderRadius: 16,
+    backgroundColor: 'transparent',
+  },
+  availableText: {
+    color: '#007AFF',
+    fontWeight: '600',
+  },
+  selectedContainer: {
+    backgroundColor: '#007AFF',
+    borderRadius: 16,
+  },
+  selectedText: {
+    color: '#fff',
+    fontWeight: '600',
   },
 });

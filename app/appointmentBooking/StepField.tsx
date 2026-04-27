@@ -1,11 +1,11 @@
 import { View, StyleSheet } from 'react-native';
 import { medicalFields } from '@data/appointment';
-import { AppointmentType } from '@appTypes/appointment';
+import { Appointment, AppointmentType } from '@appTypes/appointment';
 import UISelectDropdown from '@component/UISelectDropdown';
 
 type Props = {
-  value: AppointmentType | null;
-  onChange: (field: AppointmentType) => void;
+  value: AppointmentType | null | undefined;
+  onChange: (update: Partial<Appointment>) => void;
 };
 
 export default function StepField({ value, onChange }: Props) {
@@ -14,8 +14,8 @@ export default function StepField({ value, onChange }: Props) {
       <UISelectDropdown
         label="Medical Field"
         options={medicalFields}
-        value={value}
-        onChange={v => onChange(v as AppointmentType)}
+        value={value ?? null}
+        onChange={v => onChange({ appointmentType: v as AppointmentType, date: undefined, time: undefined })}
         placeholder="Select a medical field..."
       />
     </View>
