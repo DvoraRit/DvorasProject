@@ -1,12 +1,28 @@
 import { useEffect, useState } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Drawer } from 'expo-router/drawer';
-import { DrawerToggleButton } from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerItemList, DrawerToggleButton } from '@react-navigation/drawer';
+import type { DrawerContentComponentProps } from '@react-navigation/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import { AuthProvider, useAuth } from '@services/authService';
 import LoginScreen from './login';
 
 SplashScreen.preventAutoHideAsync();
+
+function CustomDrawerContent(props: DrawerContentComponentProps) {
+  const { logout } = useAuth();
+
+  return (
+    <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContainer}>
+      <View style={styles.drawerItems}>
+        <DrawerItemList {...props} />
+      </View>
+      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
+    </DrawerContentScrollView>
+  );
+}
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
@@ -47,6 +63,7 @@ function AppContent() {
 
   return (
     <Drawer
+      drawerContent={(props: DrawerContentComponentProps) => <CustomDrawerContent {...props} />}
       screenOptions={{
         headerShown: true,
         headerLeft: () => <DrawerToggleButton tintColor="#333" />,
@@ -57,6 +74,11 @@ function AppContent() {
       <Drawer.Screen
         name="index"
         options={{ drawerLabel: 'Home', title: 'Home' }}
+      />
+
+      <Drawer.Screen
+        name="appointmentBooking"
+        options={{ drawerLabel: 'Appointment Booking', title: 'Appointment Booking' }}
       />
 
       {/* ignore this for now, will add more screens later */}
@@ -91,5 +113,24 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
+  },
+  drawerContainer: {
+    flex: 1,
+  },
+  drawerItems: {
+    flex: 1,
+  },
+  logoutButton: {
+    margin: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    backgroundColor: '#fee2e2',
+    alignItems: 'center',
+  },
+  logoutText: {
+    color: '#dc2626',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });
