@@ -2,8 +2,10 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "baseUrl": ".",
     "paths": {
-      "@types/*": ["./packages/types/*"]
+      "@appTypes/*": ["./packages/types/*"],
+      "@services/*": ["./packages/services/*"]
     }
   }
 }

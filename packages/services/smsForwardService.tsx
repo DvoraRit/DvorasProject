@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
-import { SmsRule, SmsRuleDoc } from '@types/smsRule';
+import { SmsRule, SmsRuleDoc } from '@appTypes/smsRule';
 
-export { ForwardPlatform } from '@types/smsRule';
+export { ForwardPlatform } from '@appTypes/smsRule';
 export type { SmsRule, SmsRuleDoc };
 
 const COLLECTION = 'smsRules';

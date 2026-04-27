@@ -26,7 +26,13 @@
     },
     "plugins": [
       "expo-router",
-      "@react-native-firebase/app"
+      "@react-native-firebase/app",
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow $(PRODUCT_NAME) to access your contacts to set SMS forwarding rules."
+        }
+      ]
     ]
   }
 }

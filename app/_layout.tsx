@@ -51,9 +51,15 @@ export default function RootLayout() {
         name="index"
         options={{ drawerLabel: 'Home', title: 'Home' }}
       />
+
+      {/* ignore this for now, will add more screens later */}
       <Drawer.Screen
         name="SMSForward/index"
-        options={{ drawerLabel: 'SMS Forward', title: 'SMS Forward' }}
+        options={{ drawerItemStyle: { display: 'none' }, drawerLabel: 'SMS Forward', title: 'SMS Forward' }}
+      />
+      <Drawer.Screen
+        name="SMSForward/createRule"
+        options={{ drawerItemStyle: { display: 'none' }, title: 'Create Rule' }}
       />
     </Drawer>
   );
