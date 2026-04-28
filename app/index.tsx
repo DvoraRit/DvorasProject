@@ -1,7 +1,9 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Modal, StyleSheet } from 'react-native';
+import { useState } from 'react';
 import { router } from 'expo-router';
 import { useAppointmentStore } from '@store/appointmentStore';
 import UIButton from '@component/UIButton';
+import { useAuth } from '@services/authService';
 
 function formatDate(dateStr: string): string {
   const [year, month, day] = dateStr.split('-');
@@ -10,25 +12,32 @@ function formatDate(dateStr: string): string {
 
 export default function HomeScreen() {
   const { booking, reset } = useAppointmentStore();
+  const { username } = useAuth();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  function handleCancelConfirmed() {
+    reset();
+    setShowConfirm(false);
+    setShowSuccess(true);
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
+      <Text style={styles.title}>Welcome {username}</Text>
 
       {booking ? (
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Your Appointment</Text>
-
           <Row label="Medical Field" value={booking.appointmentType ?? '—'} />
           <View style={styles.divider} />
           <Row label="Date" value={booking.date ? formatDate(booking.date) : '—'} />
           <View style={styles.divider} />
           <Row label="Time" value={booking.time ?? '—'} />
-
           <View style={styles.actions}>
             <UIButton
               label="Cancel"
-              onPress={reset}
+              onPress={() => setShowConfirm(true)}
               style={styles.btnCancel}
               labelStyle={styles.btnCancelText}
             />
@@ -46,6 +55,46 @@ export default function HomeScreen() {
           style={styles.btnBook}
         />
       )}
+
+      {/* Are you sure? modal */}
+      <Modal visible={showConfirm} transparent animationType="fade" onRequestClose={() => setShowConfirm(false)}>
+        <View style={styles.backdrop}>
+          <View style={styles.modal}>
+            <Text style={styles.modalTitle}>Cancel Appointment</Text>
+            <Text style={styles.modalMessage}>Are you sure you want to cancel your appointment?</Text>
+            <View style={styles.modalActions}>
+              <UIButton
+                label="No, Keep It"
+                onPress={() => setShowConfirm(false)}
+                style={styles.btnKeep}
+                labelStyle={styles.btnKeepText}
+              />
+              <UIButton
+                label="Yes, Cancel"
+                onPress={handleCancelConfirmed}
+                style={styles.btnConfirmCancel}
+                labelStyle={styles.btnConfirmCancelText}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Success modal */}
+      <Modal visible={showSuccess} transparent animationType="fade" onRequestClose={() => setShowSuccess(false)}>
+        <View style={styles.backdrop}>
+          <View style={styles.modal}>
+            <Text style={styles.successIcon}>✓</Text>
+            <Text style={styles.modalTitle}>Appointment Cancelled</Text>
+            <Text style={styles.modalMessage}>Your appointment has been successfully cancelled.</Text>
+            <UIButton
+              label="OK"
+              onPress={() => setShowSuccess(false)}
+              style={styles.btnOk}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -130,5 +179,61 @@ const styles = StyleSheet.create({
   },
   btnBook: {
     paddingHorizontal: 32,
+  },
+  // Modals
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  modal: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    gap: 12,
+  },
+  modalTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#111',
+    textAlign: 'center',
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 8,
+    width: '100%',
+  },
+  btnKeep: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+  },
+  btnKeepText: {
+    color: '#333',
+  },
+  btnConfirmCancel: {
+    flex: 1,
+    backgroundColor: '#dc2626',
+  },
+  btnConfirmCancelText: {
+    color: '#fff',
+  },
+  successIcon: {
+    fontSize: 40,
+    color: '#34C759',
+  },
+  btnOk: {
+    width: '100%',
+    marginTop: 8,
   },
 });
