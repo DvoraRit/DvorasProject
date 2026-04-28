@@ -1,10 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-// ─── Hardcoded credentials ────────────────────────────────────────────────────
-const VALID_USERNAME = 'admin';
-const VALID_PASSWORD = 'dvora123';
-// ─────────────────────────────────────────────────────────────────────────────
-
 type AuthContextType = {
   isAuthenticated: boolean;
   username: string | null;
@@ -19,12 +14,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [username, setUsername] = useState<string | null>(null);
 
   function login(username: string, password: string): boolean {
-    if (username === VALID_USERNAME && password === VALID_PASSWORD) {
-      setIsAuthenticated(true);
-      setUsername(username);
-      return true;
-    }
-    return false;
+   //allow any non-empty username/password for this demo
+    if (!username.trim() || !password.trim()) return false;
+    setIsAuthenticated(true);
+    setUsername(username.trim());
+    return true;
   }
 
   function logout() {

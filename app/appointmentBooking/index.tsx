@@ -69,6 +69,12 @@ export default function AppointmentBookingScreen() {
     router.replace('/');
   }
 
+  function getNextLabel() {
+    if (step===1) return "Choose Date";
+    if (step===2) return isEditMode ? "Update" : "Confirm";
+    return "Done";
+  }
+
   const isLastStep = step === TOTAL_STEPS;
 
   return (
@@ -101,7 +107,7 @@ export default function AppointmentBookingScreen() {
           labelStyle={styles.btnBackText}
         />
         <UIButton
-          label={isLastStep ? 'Done' : 'Next'}
+          label={getNextLabel()}
           onPress={handleNext}
           disabled={!canAdvance()}
           style={styles.btnNext}
