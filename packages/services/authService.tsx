@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AUTH_KEY = 'auth_username';
@@ -42,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAuthenticated(false);
     setUsername(null);
     AsyncStorage.removeItem(AUTH_KEY);
+    router.replace('/login');
   }
 
   return (

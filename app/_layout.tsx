@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
+import { router } from 'expo-router';
 import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Drawer } from 'expo-router/drawer';
 import { DrawerContentScrollView, DrawerItemList, DrawerToggleButton } from '@react-navigation/drawer';
 import type { DrawerContentComponentProps } from '@react-navigation/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import { AuthProvider, useAuth } from '@services/authService';
-import LoginScreen from './login';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -58,7 +58,8 @@ function AppContent() {
   }
 
   if (!isAuthenticated) {
-    return <LoginScreen />;
+    router.replace('/login');
+    return null;
   }
 
   return (
@@ -79,6 +80,11 @@ function AppContent() {
       <Drawer.Screen
         name="appointmentBooking"
         options={{ drawerLabel: 'Appointment Booking', title: 'Appointment Booking' }}
+      />
+
+      <Drawer.Screen
+        name="login"
+        options={{ drawerItemStyle: { display: 'none' }, title: 'Login' }}
       />
 
       {/* ignore this for now, will add more screens later */}
