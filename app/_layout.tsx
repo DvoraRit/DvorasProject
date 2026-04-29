@@ -6,6 +6,7 @@ import { DrawerContentScrollView, DrawerItemList, DrawerToggleButton } from '@re
 import type { DrawerContentComponentProps } from '@react-navigation/drawer';
 import * as SplashScreen from 'expo-splash-screen';
 import { AuthProvider, useAuth } from '@services/authService';
+import LoginScreen from './login';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -58,8 +59,7 @@ function AppContent() {
   }
 
   if (!isAuthenticated) {
-    router.replace('/login');
-    return null;
+    return <LoginScreen />;
   }
 
   return (

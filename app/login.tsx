@@ -30,7 +30,7 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.card}>
-        <Text style={styles.title}>SMS Forward</Text>
+        <Text style={styles.title}>Clalit Appointment Booking</Text>
         <Text style={styles.subtitle}>Sign in to continue</Text>
 
         <TextInput
