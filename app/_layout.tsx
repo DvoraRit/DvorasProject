@@ -25,7 +25,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 }
 
 function AppContent() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const [appIsReady, setAppIsReady] = useState(false);
   const [animationFinished, setAnimationFinished] = useState(false);
 
@@ -43,7 +43,7 @@ function AppContent() {
     prepare();
   }, []);
 
-  if (!appIsReady || !animationFinished) {
+  if (!appIsReady || !animationFinished || isLoading) {
     return (
       <View style={styles.splash}>
         <Image

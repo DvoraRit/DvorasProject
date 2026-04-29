@@ -10,6 +10,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-firebase/app": "^24.0.0",
     "@react-native-firebase/firestore": "^24.0.0",
     "@react-navigation/drawer": "^7.9.8",
